@@ -1,7 +1,6 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import {
-  Button,
   Label,
   TextField,
   Input,
@@ -16,7 +15,7 @@ import { LoginResponse } from '@app/types/api'
 import { loginSchema, LoginData } from '@app/schemas/login'
 
 import { useAuth } from '@app/hooks/useAuth'
-import ProgressCircle from '@app/components/ProgressCircle'
+import OButton from '@app/components/OButton'
 
 export const Route = createFileRoute('/')({
   component: LoginPage,
@@ -88,21 +87,13 @@ function LoginPage() {
           />
 
           <div className="w-full [&>button]:w-full">
-            <Button
+            <OButton
               type="submit"
               isPending={loginMutation.isPending}
               isDisabled={loginMutation.isPending}
             >
-              {loginMutation.isPending ? (
-                <ProgressCircle
-                  className="py-0.5 flex justify-center"
-                  aria-label="Loading…"
-                  isIndeterminate
-                />
-              ) : (
-                'Login'
-              )}
-            </Button>
+              Login
+            </OButton>
           </div>
         </Form>
       </div>

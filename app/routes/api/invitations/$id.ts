@@ -3,12 +3,15 @@ import { createAPIFileRoute } from '@tanstack/start/api'
 import * as fs from 'fs'
 import { parse } from 'cookie'
 
+import { fakeApiLoadTime } from '@app/helpers'
 import { DbPath } from '@app/types/api'
 import { Invitation } from '@app/types/invitation'
 
 export const Route = createAPIFileRoute('/api/invitations/$id')({
   DELETE: async ({ request, params }) => {
     try {
+      await fakeApiLoadTime()
+
       const cookies = parse(request.headers.get('cookie') || '')
       const { id } = params
 

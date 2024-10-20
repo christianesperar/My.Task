@@ -7,7 +7,6 @@ import {
   TabList,
   Tab,
   TabPanel,
-  Button,
   Cell,
   Column,
   Row,
@@ -22,7 +21,7 @@ import { Status } from '@app/types/invitation'
 import { InvitationResponse } from '@app/types/api'
 
 import ProtectedRoute from '@app/components/ProtectedRoute'
-import ButtonTransparent from '@app/components/ButtonTransparent'
+import OButton from '@app/components/OButton'
 import SwitchPermissions from '@app/components/SwitchPermissions'
 import { axiosInstance, formatDate } from '@app/helpers'
 
@@ -70,6 +69,9 @@ function ManageInvitesPage() {
     deleteMutation.mutate(id)
   }
 
+  const isDeletingItem = (id: string) =>
+    itemToDelete === id && deleteMutation.isPending
+
   const handleToggleRow = (id: string) => {
     setExpandedRows((prev) => {
       const newSet = new Set(prev)
@@ -92,12 +94,9 @@ function ManageInvitesPage() {
 
         <TabPanel id="given">
           <div className="mb-4 flex justify-end">
-            <Button
-              className="react-aria-Button"
-              onPress={() => navigate({ to: '/invitations/add' })}
-            >
+            <OButton onPress={() => navigate({ to: '/invitations/add' })}>
               Invite User
-            </Button>
+            </OButton>
           </div>
 
           {/* Use ResizableTableContainer as I am unable to adjust the width of the Table component for some reason */}
@@ -122,25 +121,21 @@ function ManageInvitesPage() {
                             item.status,
                           ) && (
                             <span className="mr-1">
-                              <Button
-                                isPending={
-                                  !!itemToDelete && deleteMutation.isPending
-                                }
-                                isDisabled={
-                                  !!itemToDelete && deleteMutation.isPending
-                                }
+                              <OButton
+                                isPending={isDeletingItem(item.id)}
+                                isDisabled={isDeletingItem(item.id)}
                                 onPress={() => handleDelete(item.id)}
                               >
                                 Delete
-                              </Button>
+                              </OButton>
                             </span>
                           )}
-                          <ButtonTransparent
-                            borderless
+                          <OButton
+                            variant="text"
                             onPress={() => handleToggleRow(item.id)}
                           >
                             {expandedRows.has(item.id) ? '▲' : '▼'}
-                          </ButtonTransparent>{' '}
+                          </OButton>{' '}
                         </div>
                       </Cell>
                     </Row>
@@ -188,19 +183,19 @@ function ManageInvitesPage() {
                           {item.status === Status.Pending && (
                             <>
                               <span className="mr-1">
-                                <Button>Accept</Button>
+                                <OButton>Accept</OButton>
                               </span>
 
-                              <ButtonTransparent>Reject</ButtonTransparent>
+                              <OButton>Reject</OButton>
                             </>
                           )}
 
-                          <ButtonTransparent
-                            borderless
+                          <OButton
+                            variant="text"
                             onPress={() => handleToggleRow(item.id)}
                           >
                             {expandedRows.has(item.id) ? '▲' : '▼'}
-                          </ButtonTransparent>
+                          </OButton>
                         </div>
                       </Cell>
                     </Row>

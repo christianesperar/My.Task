@@ -1,8 +1,8 @@
 import { ReactNode } from 'react'
-import { Button } from 'react-aria-components'
+import { useNavigate } from '@tanstack/react-router'
 
 import { useAuth } from '@app/hooks/useAuth'
-import { useNavigate } from '@tanstack/react-router'
+import OButton from '@app/components/OButton'
 
 interface ProtectedRouteProps {
   children: ReactNode
@@ -21,9 +21,7 @@ export default function ProtectedRoute({ children }: ProtectedRouteProps) {
   return (
     <>
       <div className="mt-3 mr-2.5 flex justify-end">
-        <Button className="react-aria-Button" onPress={logout}>
-          Logout
-        </Button>
+        <OButton onPress={logout}>Logout</OButton>
       </div>
       {children}
     </>

@@ -9,7 +9,6 @@ import {
   ListBox,
   ListBoxItem,
   Popover,
-  Button,
   Form,
   FieldError,
   Dialog,
@@ -25,9 +24,8 @@ import { invitationSchema, InvitationData } from '@app/schemas/invitation'
 
 import { useAuth } from '@app/hooks/useAuth'
 import ProtectedRoute from '@app/components/ProtectedRoute'
-import ButtonTransparent from '@app/components/ButtonTransparent'
+import OButton from '@app/components/OButton'
 import SwitchPermissions from '@app/components/SwitchPermissions'
-import ProgressCircle from '@app/components/ProgressCircle'
 import { axiosInstance } from '@app/helpers'
 
 const fetchUsers = createServerFn('GET', async () => {
@@ -107,7 +105,7 @@ function InviteUserPage() {
 
                     <div>
                       <Input />
-                      <Button>▼</Button>
+                      <OButton>▼</OButton>
                     </div>
                     <Popover>
                       <ListBox>
@@ -144,26 +142,19 @@ function InviteUserPage() {
             />
 
             <div className="w-full flex justify-between items-center">
-              <ButtonTransparent
+              <OButton
+                variant="outlined"
                 onPress={() => navigate({ to: '/invitations' })}
               >
                 Back
-              </ButtonTransparent>
-              <Button
+              </OButton>
+              <OButton
                 type="submit"
                 isPending={addMutation.isPending}
                 isDisabled={addMutation.isPending}
               >
-                {addMutation.isPending ? (
-                  <ProgressCircle
-                    className="py-0.5 flex justify-center"
-                    aria-label="Loading…"
-                    isIndeterminate
-                  />
-                ) : (
-                  'Invite User'
-                )}
-              </Button>
+                Invite User
+              </OButton>
             </div>
           </Form>
 
@@ -192,13 +183,11 @@ function InviteUserPage() {
                   </ul>
 
                   <div className="flex justify-end gap-1">
-                    <ButtonTransparent
-                      onPress={() => setShowConfirmation(false)}
-                    >
+                    <OButton onPress={() => setShowConfirmation(false)}>
                       Cancel
-                    </ButtonTransparent>
+                    </OButton>
 
-                    <Button onPress={handleProceed}>Proceed</Button>
+                    <OButton onPress={handleProceed}>Proceed</OButton>
                   </div>
                 </>
               </Dialog>
