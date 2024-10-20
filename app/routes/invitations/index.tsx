@@ -23,6 +23,7 @@ import { InvitationResponse } from '@app/types/api'
 import ProtectedRoute from '@app/components/ProtectedRoute'
 import OButton from '@app/components/OButton'
 import SwitchPermissions from '@app/components/SwitchPermissions'
+import AlertDialog from '@app/components/AlertDialog'
 import { axiosInstance, formatDate } from '@app/helpers'
 
 const fetchInvitations = createServerFn('GET', async () => {
@@ -53,7 +54,8 @@ function ManageInvitesPage() {
   const navigate = useNavigate()
   const state = Route.useLoaderData()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
-  const [itemToDelete, setItemToDelete] = useState<string>('')
+  const [userToDelete, setUserToDelete] = useState<InvitationResponse>()
+  const [showConfirmation, setShowConfirmation] = useState<boolean>(false)
 
   const deleteMutation = useMutation({
     mutationFn: (id: string) => {
@@ -64,13 +66,20 @@ function ManageInvitesPage() {
     },
   })
 
-  const handleDelete = async (id: string) => {
-    setItemToDelete(id)
-    deleteMutation.mutate(id)
+  const handleDelete = async (user: InvitationResponse) => {
+    setUserToDelete(user)
+    setShowConfirmation(true)
   }
 
-  const isDeletingItem = (id: string) =>
-    itemToDelete === id && deleteMutation.isPending
+  const handleProceed = () => {
+    if (!userToDelete) return
+
+    deleteMutation.mutate(userToDelete.id)
+    setShowConfirmation(false)
+  }
+
+  const isDeletingUser = (id: string) =>
+    userToDelete?.id === id && deleteMutation.isPending
 
   const handleToggleRow = (id: string) => {
     setExpandedRows((prev) => {
@@ -109,22 +118,22 @@ function ManageInvitesPage() {
                 <Column width={122}>Actions</Column>
               </TableHeader>
               <TableBody renderEmptyState={() => 'No results found.'}>
-                {state.invitationsByInviter.map((item) => (
-                  <React.Fragment key={item.id}>
+                {state.invitationsByInviter.map((user) => (
+                  <React.Fragment key={user.id}>
                     <Row>
-                      <Cell>{item.inviteeEmail}</Cell>
-                      <Cell>{formatDate(item.createdAt)}</Cell>
-                      <Cell>{item.status}</Cell>
+                      <Cell>{user.inviteeEmail}</Cell>
+                      <Cell>{formatDate(user.createdAt)}</Cell>
+                      <Cell>{user.status}</Cell>
                       <Cell>
                         <div className="flex justify-end">
                           {[Status.Pending, Status.Accepted].includes(
-                            item.status,
+                            user.status,
                           ) && (
                             <span className="mr-1">
                               <OButton
-                                isPending={isDeletingItem(item.id)}
-                                isDisabled={isDeletingItem(item.id)}
-                                onPress={() => handleDelete(item.id)}
+                                isPending={isDeletingUser(user.id)}
+                                isDisabled={isDeletingUser(user.id)}
+                                onPress={() => handleDelete(user)}
                               >
                                 Delete
                               </OButton>
@@ -132,19 +141,19 @@ function ManageInvitesPage() {
                           )}
                           <OButton
                             variant="text"
-                            onPress={() => handleToggleRow(item.id)}
+                            onPress={() => handleToggleRow(user.id)}
                           >
-                            {expandedRows.has(item.id) ? '▲' : '▼'}
+                            {expandedRows.has(user.id) ? '▲' : '▼'}
                           </OButton>{' '}
                         </div>
                       </Cell>
                     </Row>
-                    {expandedRows.has(item.id) && (
+                    {expandedRows.has(user.id) && (
                       <Row className="relative h-[200px]">
                         <Cell className="absolute">
                           <div className="p-4 pt-1 text-base">
                             <SwitchPermissions
-                              selectedPermissions={item.permissions}
+                              selectedPermissions={user.permissions}
                               onChange={() => {}}
                             />
                           </div>
@@ -172,15 +181,15 @@ function ManageInvitesPage() {
                 <Column width={192}>Actions</Column>
               </TableHeader>
               <TableBody renderEmptyState={() => 'No results found.'}>
-                {state.invitationsByInvitee.map((item) => (
-                  <React.Fragment key={item.id}>
+                {state.invitationsByInvitee.map((user) => (
+                  <React.Fragment key={user.id}>
                     <Row>
-                      <Cell>{item.inviterEmail}</Cell>
-                      <Cell>{formatDate(item.createdAt)}</Cell>
-                      <Cell>{item.status}</Cell>
+                      <Cell>{user.inviterEmail}</Cell>
+                      <Cell>{formatDate(user.createdAt)}</Cell>
+                      <Cell>{user.status}</Cell>
                       <Cell>
                         <div className="flex justify-end">
-                          {item.status === Status.Pending && (
+                          {user.status === Status.Pending && (
                             <>
                               <span className="mr-1">
                                 <OButton>Accept</OButton>
@@ -192,19 +201,19 @@ function ManageInvitesPage() {
 
                           <OButton
                             variant="text"
-                            onPress={() => handleToggleRow(item.id)}
+                            onPress={() => handleToggleRow(user.id)}
                           >
-                            {expandedRows.has(item.id) ? '▲' : '▼'}
+                            {expandedRows.has(user.id) ? '▲' : '▼'}
                           </OButton>
                         </div>
                       </Cell>
                     </Row>
-                    {expandedRows.has(item.id) && (
+                    {expandedRows.has(user.id) && (
                       <Row className="relative h-[200px]">
                         <Cell className="absolute">
                           <div className="p-4 pt-1 text-base">
                             <SwitchPermissions
-                              selectedPermissions={item.permissions}
+                              selectedPermissions={user.permissions}
                               onChange={() => {}}
                             />
                           </div>
@@ -220,6 +229,18 @@ function ManageInvitesPage() {
             </Table>
           </ResizableTableContainer>
         </TabPanel>
+
+        <AlertDialog
+          isOpen={showConfirmation}
+          onProceed={handleProceed}
+          onCancel={() => setShowConfirmation(false)}
+        >
+          <p className="mb-2">Are you sure you want to proceed?</p>
+
+          <p>
+            This will delete <strong>{userToDelete?.inviteeEmail}</strong>.
+          </p>
+        </AlertDialog>
       </Tabs>
     </>
   )

@@ -11,9 +11,6 @@ import {
   Popover,
   Form,
   FieldError,
-  Dialog,
-  DialogTrigger,
-  Modal,
 } from 'react-aria-components'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
@@ -26,6 +23,7 @@ import { useAuth } from '@app/hooks/useAuth'
 import ProtectedRoute from '@app/components/ProtectedRoute'
 import OButton from '@app/components/OButton'
 import SwitchPermissions from '@app/components/SwitchPermissions'
+import AlertDialog from '@app/components/AlertDialog'
 import { axiosInstance } from '@app/helpers'
 
 const fetchUsers = createServerFn('GET', async () => {
@@ -158,41 +156,32 @@ function InviteUserPage() {
             </div>
           </Form>
 
-          <DialogTrigger isOpen={showConfirmation}>
-            <Modal>
-              <Dialog role="alertdialog">
-                <>
-                  <p className="mb-2">Are you sure you want to proceed?</p>
-                  <p>
-                    This will invite{' '}
-                    <strong>
-                      {
-                        state.users.find(
-                          ({ id }) => id === getValues('inviteeId'),
-                        )?.email
-                      }
-                    </strong>{' '}
-                    with following permission(s):
-                  </p>
-                  <ul className="mb-4">
-                    {getValues('permissions').map((permission) => (
-                      <li key={permission}>
-                        - <span className="font-semibold">{permission}</span>
-                      </li>
-                    ))}
-                  </ul>
-
-                  <div className="flex justify-end gap-1">
-                    <OButton onPress={() => setShowConfirmation(false)}>
-                      Cancel
-                    </OButton>
-
-                    <OButton onPress={handleProceed}>Proceed</OButton>
-                  </div>
-                </>
-              </Dialog>
-            </Modal>
-          </DialogTrigger>
+          <AlertDialog
+            isOpen={showConfirmation}
+            onProceed={handleProceed}
+            onCancel={() => setShowConfirmation(false)}
+          >
+            <>
+              <p className="mb-2">Are you sure you want to proceed?</p>
+              <p>
+                This will invite{' '}
+                <strong>
+                  {
+                    state.users.find(({ id }) => id === getValues('inviteeId'))
+                      ?.email
+                  }
+                </strong>{' '}
+                with following permission(s):
+              </p>
+              <ul>
+                {getValues('permissions').map((permission) => (
+                  <li key={permission}>
+                    - <span className="font-semibold">{permission}</span>
+                  </li>
+                ))}
+              </ul>
+            </>
+          </AlertDialog>
         </div>
       </div>
     </>
