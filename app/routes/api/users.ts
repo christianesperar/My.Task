@@ -2,15 +2,13 @@ import { json } from '@tanstack/start'
 import { createAPIFileRoute } from '@tanstack/start/api'
 import * as fs from 'fs'
 
-import { fakeApiLoadTime } from '@app/helpers'
+import { authMiddleware } from '@app/middlewares/auth'
 import { DbPath } from '@app/types/api'
 import { User } from '@app/types/user'
 
 export const Route = createAPIFileRoute('/api/users')({
-  GET: async () => {
+  GET: authMiddleware(async () => {
     try {
-      fakeApiLoadTime()
-
       const fileResponse = await fs.promises.readFile(DbPath.Users, 'utf-8')
 
       const users = (JSON.parse(fileResponse) as User[]).map((user: User) => {
@@ -29,5 +27,5 @@ export const Route = createAPIFileRoute('/api/users')({
 
       return json({ message: 'An unexpected error occurred' }, { status: 500 })
     }
-  },
+  }),
 })

@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import { createFileRoute, useRouter, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/start'
 import { useMutation } from '@tanstack/react-query'
 import {
@@ -51,6 +51,7 @@ export const Route = createFileRoute('/invitations/')({
 })
 
 function ManageInvitesPage() {
+  const router = useRouter()
   const navigate = useNavigate()
   const state = Route.useLoaderData()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
@@ -62,7 +63,7 @@ function ManageInvitesPage() {
       return axios.delete(`/api/invitations/${id}`, { withCredentials: true })
     },
     onSuccess: () => {
-      navigate({ to: '/invitations' })
+      router.invalidate()
     },
   })
 

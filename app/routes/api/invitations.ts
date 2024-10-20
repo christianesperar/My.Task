@@ -4,7 +4,7 @@ import * as fs from 'fs'
 import { v4 as uuidv4 } from 'uuid'
 import { parse } from 'cookie'
 
-import { fakeApiLoadTime } from '@app/helpers'
+import { authMiddleware } from '@app/middlewares/auth'
 import { DbPath } from '@app/types/api'
 import { Invitation, Status } from '@app/types/invitation'
 import { User } from '@app/types/user'
@@ -12,10 +12,8 @@ import { InvitationFilterBy, InvitationResponse } from '@app/types/api'
 import { invitationSchema, InvitationData } from '@app/schemas/invitation'
 
 export const Route = createAPIFileRoute('/api/invitations')({
-  GET: async ({ request }) => {
+  GET: authMiddleware(async ({ request }) => {
     try {
-      await fakeApiLoadTime()
-
       const cookies = parse(request.headers.get('cookie') || '')
       const url = new URL(request.url)
       const filterBy = url.searchParams.get(
@@ -62,11 +60,9 @@ export const Route = createAPIFileRoute('/api/invitations')({
 
       return json({ message: 'An unexpected error occurred' }, { status: 500 })
     }
-  },
-  POST: async ({ request }) => {
+  }),
+  POST: authMiddleware(async ({ request }) => {
     try {
-      await fakeApiLoadTime()
-
       const cookies = parse(request.headers.get('cookie') || '')
       const body = (await request.json()) as InvitationData
       const validatedData = invitationSchema.parse(body)
@@ -116,5 +112,5 @@ export const Route = createAPIFileRoute('/api/invitations')({
 
       return json({ message: 'An unexpected error occurred' }, { status: 500 })
     }
-  },
+  }),
 })
