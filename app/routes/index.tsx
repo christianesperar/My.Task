@@ -1,9 +1,5 @@
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
-import {
-  useMutation,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import {
   Button,
   Label,
@@ -22,21 +18,11 @@ import { loginSchema, LoginData } from '@app/schemas/login'
 import { useAuth } from '@app/hooks/useAuth'
 import ProgressCircle from '@app/components/ProgressCircle'
 
-const queryClient = new QueryClient()
-
 export const Route = createFileRoute('/')({
   component: LoginPage,
 })
 
 function LoginPage() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <LoginForm />
-    </QueryClientProvider>
-  )
-}
-
-function LoginForm() {
   const { login } = useAuth()
   const navigate = useNavigate()
 
@@ -48,8 +34,6 @@ function LoginForm() {
     },
     onSuccess: (response) => {
       login(response.data.token)
-      // axios.defaults.headers.common['Authorization'] = `Bearer ${token}`
-
       navigate({ to: '/invitations' })
     },
   })

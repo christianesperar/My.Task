@@ -1,11 +1,7 @@
 import { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/start'
-import {
-  useMutation,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import {
   ComboBox,
   Input,
@@ -45,23 +41,13 @@ const fetchUsers = createServerFn('GET', async () => {
 export const Route = createFileRoute('/invitations/add')({
   component: () => (
     <ProtectedRoute>
-      <ManageInvitesPage />
+      <InviteUserPage />
     </ProtectedRoute>
   ),
   loader: async () => await fetchUsers(),
 })
 
-const queryClient = new QueryClient()
-
-function ManageInvitesPage() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <AddForm />
-    </QueryClientProvider>
-  )
-}
-
-function AddForm() {
+function InviteUserPage() {
   const { getUserToken } = useAuth()
   const state = Route.useLoaderData()
   const navigate = useNavigate()

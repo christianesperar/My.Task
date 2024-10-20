@@ -1,11 +1,7 @@
 import React, { useState } from 'react'
 import { createFileRoute, useNavigate } from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/start'
-import {
-  useMutation,
-  QueryClient,
-  QueryClientProvider,
-} from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import {
   Tabs,
   TabList,
@@ -54,17 +50,7 @@ export const Route = createFileRoute('/invitations/')({
   loader: async () => await fetchInvitations(),
 })
 
-const queryClient = new QueryClient()
-
 function ManageInvitesPage() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <InvitationList />
-    </QueryClientProvider>
-  )
-}
-
-function InvitationList() {
   const navigate = useNavigate()
   const state = Route.useLoaderData()
   const [expandedRows, setExpandedRows] = useState<Set<string>>(new Set())
