@@ -1,4 +1,8 @@
-import { createFileRoute, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  useNavigate,
+  useLocation,
+} from '@tanstack/react-router'
 import { useMutation } from '@tanstack/react-query'
 import {
   Label,
@@ -24,6 +28,7 @@ export const Route = createFileRoute('/')({
 function LoginPage() {
   const { login } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
 
   const loginMutation = useMutation({
     mutationFn: (formData: LoginData) => {
@@ -33,7 +38,9 @@ function LoginPage() {
     },
     onSuccess: (response) => {
       login(response.data.token)
-      navigate({ to: '/invitations' })
+
+      const lastUrl = (location.search as any).lastUrl as string | undefined
+      navigate({ to: lastUrl || '/invitations' })
     },
   })
 

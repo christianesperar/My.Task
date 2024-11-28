@@ -1,5 +1,10 @@
 import React, { useState } from 'react'
-import { createFileRoute, useRouter, useNavigate } from '@tanstack/react-router'
+import {
+  createFileRoute,
+  redirect,
+  useRouter,
+  useNavigate,
+} from '@tanstack/react-router'
 import { createServerFn } from '@tanstack/start'
 import { useMutation } from '@tanstack/react-query'
 import {
@@ -47,7 +52,15 @@ export const Route = createFileRoute('/invitations/')({
       <ManageInvitesPage />
     </ProtectedRoute>
   ),
-  loader: async () => await fetchInvitations(),
+  loader: async () => {
+    try {
+      return await fetchInvitations()
+    } catch {
+      throw redirect({
+        to: '/',
+      })
+    }
+  },
 })
 
 function ManageInvitesPage() {
