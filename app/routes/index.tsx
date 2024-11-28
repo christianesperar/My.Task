@@ -48,7 +48,7 @@ function LoginPage() {
   return (
     <div className="mt-24 flex justify-center">
       <div className="flex flex-col items-center [&_.react-aria-TextField]:w-full">
-        <h1 className="text-3xl mb-6">Login to Only1.Task</h1>
+        <h1 className="text-3xl mb-6">Login to My.Task</h1>
 
         <Form onSubmit={handleSubmit(onSubmit)}>
           {loginMutation.isError && (

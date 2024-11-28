@@ -1,7 +1,7 @@
-# Only1.Task
+# My.Task
 
 ## Libraries
-All the libraries suggested [here](https://gist.github.com/lithdew/1c162c714bf80c857682d95c14f01d50#requirements) plus added a few for the API integration, mock database, and authentication flow:
+All the libraries suggested [here](https://github.com/christianesperar/My.Task/blob/main/Requirements.md) plus added a few for the API integration, mock database, and authentication flow:
 - axios
 - argon2
 - uiid
@@ -11,8 +11,8 @@ All the libraries suggested [here](https://gist.github.com/lithdew/1c162c714bf80
 ## Installation
 Assuming that the computer already has `node` and `npm` installed, do the following:
 ```js
-- git clone git@github.com:christianesperar/Only1.Task.git
-- cd Only1.Task
+- git clone git@github.com:christianesperar/My.Task.git
+- cd My.Task
 - npm install --global yarn
 - yarn install
 - yarn run dev
